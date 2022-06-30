@@ -36,7 +36,7 @@ int	main(void)
 	img.img = mlx_new_image(mlx, width, height);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
 								&img.endian);
-	color = 0x00FF0000;
+	color = 0x00000000;
 	point.y = 100;
 	while (point.y < height - 100)
 	{
@@ -45,10 +45,10 @@ int	main(void)
 		{
 			my_mlx_pixel_put(&img, point.x, point.y, color);
 			point.x++;
-			if (point.x % 4 == 0)
+			if (point.x % 30 == 0)
 				color += 0x00000001;
 		}
-		color = 0x00000100 * point.y / 4;
+		color = 0x00000100 * point.y / 2;
 		point.y++;
 	}
 	mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
