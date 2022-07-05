@@ -1,56 +1,46 @@
-#include <mlx.h>
+#include "fdf.h"
 
-typedef struct	s_data {
-	void	*img;
-	char	*addr;
-	int		bits_per_pixel;
-	int		line_length;
-	int		endian;
-}				t_data;
-
-typedef struct	s_point {
-	int	x;
-	int	y;
-}				t_point;
-
-void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
+int	close(int keycode, t_mlx *vars)
 {
-	char	*dst;
-
-	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-	*(unsigned int*)dst = color;
+	if (keycode == 53)
+	{
+		mlx_destroy_window(vars->mlx, vars->win);
+		exit(0);
+	}
+	return 0;
 }
 
 int	main(void)
 {
-	void	*mlx;
-	void	*mlx_win;
+	t_mlx	vars;
 	t_data	img;
-	int		height = 1080;
-	int		width = 1920;
-	t_point	point;
-	int		color;
+	t_point	p1;
+	t_point	p2;
 
-	mlx = mlx_init();
-	mlx_win = mlx_new_window(mlx, width, height, "Hello world!");
-	img.img = mlx_new_image(mlx, width, height);
-	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
-								&img.endian);
-	color = 0x00000000;
-	point.y = 100;
-	while (point.y < height - 100)
-	{
-		point.x = 100;
-		while (point.x < width - 100)
-		{
-			my_mlx_pixel_put(&img, point.x, point.y, color);
-			point.x++;
-			if (point.x % 30 == 0)
-				color += 0x00000001;
-		}
-		color = 0x00000100 * point.y / 2;
-		point.y++;
-	}
-	mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
-	mlx_loop(mlx);
+	vars.h = 1080;
+	vars.w = 1920;
+	p1.x = 10;
+	p1.y = 540;
+	p1.color = 0x00000022;
+	p2.x = 1910;
+	p2.y = 540;
+	p2.color = 0x0000FFAA;
+	vars.mlx = mlx_init();
+	vars.win = mlx_new_window(vars.mlx, vars.w, vars.h, "Hello FdF!");
+	img.img = mlx_new_image(vars.mlx, vars.w, vars.h);
+	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
+	draw_line(&img, &p1, &p2);
+	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 0, 0);
+	mlx_hook(vars.win, 2, 0L, close, &vars);
+	mlx_loop(vars.mlx);
+	return (0);
 }
+
+//TODO
+//Draw 2D lines
+//	Arbitrary coord.
+//	With offset (eg. [0,0] is at [500,500])
+//Projections
+//argv/c check
+//Map file parser
+//Free

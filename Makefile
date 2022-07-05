@@ -6,7 +6,7 @@ LDFLAGS := -Lmlx -lmlx -framework OpenGL -framework AppKit
 
 BUILD_DIR := build
 SRC_DIRS := src
-SRCS := main.c
+SRCS := main.c draw_line.c
 OBJS := $(SRCS:%.c=$(BUILD_DIR)/%.o)
 
 # The final build step.
