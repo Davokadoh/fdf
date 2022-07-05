@@ -68,10 +68,6 @@ void	draw_line2(int steep, t_data *mlx, t_point *p1, t_point *p2)
 		y += grad;
 		++x;
 	}
-	int i;
-	i = 100;
-	while (++i < 1000)
-		put_pixel(mlx, i, 100, 0x0000AAAA);
 }
 
 void	swap(int *a, int *b)
@@ -83,22 +79,22 @@ void	swap(int *a, int *b)
 	*b = swap;
 }
 
-void	draw_line(t_data *mlx, t_point *p1, t_point *p2)
+void	draw_line(t_data *mlx, t_point p1, t_point p2)
 {
 	int	steep;
 
-	steep = abs(p2->y - p1->y) > abs(p2->x - p1->x);
+	steep = abs(p2.y - p1.y) > abs(p2.x - p1.x);
 	if (steep)
 	{
-		swap(&p1->x, &p1->y);
-		swap(&p2->x, &p2->y);
+		swap(&p1.x, &p1.y);
+		swap(&p2.x, &p2.y);
 	}
-	if (p1->x > p2->x)
+	if (p1.x > p2.x)
 	{
-		swap(&p1->x, &p2->x);
-		swap(&p1->y, &p2->y);
-		swap(&p1->color, &p2->color);
+		swap(&p1.x, &p2.x);
+		swap(&p1.y, &p2.y);
+		swap(&p1.color, &p2.color);
 	}
-	draw_line2(steep, mlx, p1, p2);
+	draw_line2(steep, mlx, &p1, &p2);
 }
 

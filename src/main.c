@@ -19,17 +19,17 @@ int	main(void)
 
 	vars.h = 1080;
 	vars.w = 1920;
-	p1.x = 10;
-	p1.y = 540;
-	p1.color = 0x00000022;
-	p2.x = 1910;
-	p2.y = 540;
-	p2.color = 0x0000FFAA;
+	p1.x = 100;
+	p1.y = 240;
+	p1.color = 0x00FF0F00;
+	p2.x = 100;
+	p2.y = 840;
+	p2.color = 0x1100F0FF;
 	vars.mlx = mlx_init();
 	vars.win = mlx_new_window(vars.mlx, vars.w, vars.h, "Hello FdF!");
 	img.img = mlx_new_image(vars.mlx, vars.w, vars.h);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
-	draw_line(&img, &p1, &p2);
+	draw_line(&img, p1, p2);
 	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 0, 0);
 	mlx_hook(vars.win, 2, 0L, close, &vars);
 	mlx_loop(vars.mlx);

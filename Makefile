@@ -16,10 +16,12 @@ $(TARGET): $(OBJS)
 
 # Build step for C source
 $(BUILD_DIR)/%.o: $(SRC_DIRS)/%.c
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	$(CC) -Imlx $(CFLAGS) -c $< -o $@
 
 .PHONY: clean fclean re
+
+all: $(TARGET)
 
 clean:
 	rm -rf $(BUILD_DIR)
@@ -27,4 +29,4 @@ clean:
 fclean: clean
 	rm -rf $(TARGET)
 
-re: fclean TARGET
+re: fclean all

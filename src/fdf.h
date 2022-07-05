@@ -32,6 +32,6 @@ typedef struct	s_mlx {
 	int		w;
 }				t_mlx;
 
-void	draw_line(t_data *mlx, t_point *p1, t_point *p2);
+void	draw_line(t_data *mlx, t_point p1, t_point p2);
 
 #endif
