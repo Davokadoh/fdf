@@ -1,0 +1,10 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory `/Users/jleroux/Workspace/fdf'
+mkdir -p build/
+gcc -Imlx -Wall -Wextra -Werror -g  -c src/main.c -o build/main.o
+mkdir -p build/
+gcc -Imlx -Wall -Wextra -Werror -g  -c src/draw_line.c -o build/draw_line.o
+make -C mlx
+gcc build/main.o build/draw_line.o -o fdf -Lmlx -lmlx -framework OpenGL -framework AppKit
+make: Leaving directory `/Users/jleroux/Workspace/fdf'
+ 

@@ -1,7 +1,7 @@
 TARGET := fdf
 
 CC := gcc
-CFLAGS := -Wall -Wextra -Werror#-fsanitize
+CFLAGS := -Wall -Wextra -Werror -g #-fsanitize
 LDFLAGS := -Lmlx -lmlx -framework OpenGL -framework AppKit
 
 BUILD_DIR := build

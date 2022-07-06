@@ -1,0 +1,7 @@
+- Check argc/v
+- Read map input
+- Parse map
+- Init controls
+- Project 3d to 2d
+- Center projection to center of window
+- Push buffer to screen

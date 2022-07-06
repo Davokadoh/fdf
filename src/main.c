@@ -22,9 +22,9 @@ int	main(void)
 	p1.x = 100;
 	p1.y = 240;
 	p1.color = 0x00FF0F00;
-	p2.x = 100;
+	p2.x = 1500;
 	p2.y = 840;
-	p2.color = 0x1100F0FF;
+	p2.color = 0x0000F0FF;
 	vars.mlx = mlx_init();
 	vars.win = mlx_new_window(vars.mlx, vars.w, vars.h, "Hello FdF!");
 	img.img = mlx_new_image(vars.mlx, vars.w, vars.h);

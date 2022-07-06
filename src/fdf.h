@@ -1,9 +1,9 @@
 #ifndef FDF_H
 # define FDF_H
 
-#include <mlx.h>
-#include <stdlib.h>
-#include <math.h>
+# include "mlx.h"
+# include <stdlib.h>
+# include <math.h>
 
 typedef struct	s_vec2
 {
