@@ -1,61 +1,111 @@
 #include "fdf.h"
 
-int	close(int keycode, t_mlx *vars)
+typedef struct s_vec2d
 {
-	if (keycode == 53)
+	int	x;
+	int	y;
+	int	color;
+}	t_vec2d;
+
+typedef struct s_map
+{
+	int		width;
+	int		height;
+	t_vec2d	**points;
+}	t_map;
+
+typedef struct s_env
+{
+	t_map	*map;
+	t_mlx	*mlx;
+	t_data	*img;
+}	t_env;
+
+typedef struct	s_img {
+	void	*img;
+	char	*addr;
+	int		bits_per_pixel;
+	int		line_length;
+	int		endian;
+}	t_img;
+
+
+
+
+
+
+
+
+
+
+
+
+read_and_parse(int fd)
+{
+	t_map	map;
+	char	**nbrs;
+	char	*line;
+	int		i;
+	int		j;
+
+	i = 0;
+	while ((line = get_next_line(fd)) > 0)
 	{
-		mlx_destroy_window(vars->mlx, vars->win);
-		exit(0);
+		nbrs = ft_strsplit(line, ' ');
+		j = -1;
+		while (nbrs[++j])
+			map.points[i][j] = ft_atoi(nbrs[j]);
+		i++;
 	}
-	return 0;
+	return (map);
 }
 
-// Tries to read map file
-// Returns 0 if success, 1 if error
-// If success, fills in *map with map data
-read_and_parse(int fd, t_data *data)
-{
-	while (get_next_line() > 0)
-	{
-		data->map[data->map_size] = ft_strsplit(line, ' ');
-		data->map_size++;
-		
-	}
-}
-
-typedef struct s_data
-{
-	int	map_size;
-	int	**map;
-}	t_data;
-
-statuc void	init_env(t_data *env)
+void	init_env(t_data *env)
 {
 	env->mlx = mlx_init();
 	env->win = mlx_new_window(env->mlx, WIDTH, HEIGHT, "Fil de Fer");
-	init-img(env);
+	init->img(env);
 	init->mouse();
 }
 
-// Call func to read and parse input file
-// If file is valid, init vars then draw map
-// Hooks to get keyboard and mous inputs
-// Start mlx loop
-int main(int argc, char **argv)
+void	render_frame()
 {
-	t_data env;
+	project();
+	mlx_put_image_to_window(mlx, win, img, 0, 0);
+}
+
+void	hooks()
+{
+	mlx_loop_hook(data.mlx_ptr, &render_frame, &data);
+	mlx_key_hook();
+	mlx_hook();
+}
+
+void	display(t_data data)
+{
+	void	*mlx;
+	void	*win;
+	t_img	img;
+	
+	mlx = mlx_init();
+	win = mlx_new_window(mlx, width, height, "Fil de Fer"); //Update to name of the file!
+	img = mlx_new_image(mlx, width, height);
+	//What is get_data_addr useful for ?
+	img.addr = mlx_get_data_addr(
+		img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
+	hooks(win);
+	mlx_loop(mlx);
+}
+
+int main(int ac, char **av)
+{
+	t_map	map;
+	t_env	env;
 
 	if (argc != 2)
-	{
-		write(2, "Usage: ./fdf <map.fdf>\n", 26);
-		return (1);
-	}
-	init_env(&env);
-	if (read_and_parse_file(argv[1], &env))
-		return (1);
-	render(env);
-	//More hooks still needed
-	mlx_hook(vars->win, 2, 0L, close, &vars);
-	//mlx_loop_hook(vars->mlx, render, &vars);
-	mlx_loop(vars->mlx);
+		ft_error("Usage: ./fdf <map_file>\n");
+	if ((map = read_and_parse_file(av[1])) == NULL)
+		ft_error("Error: invalid map file\n");
+	display(map);
+	free_data();
 }

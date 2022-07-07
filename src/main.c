@@ -21,7 +21,7 @@ int	main(void)
 	vars.w = 1920;
 	p1.x = 100;
 	p1.y = 240;
-	p1.color = 0x00FF0F00;
+	p1.color = 0x00002400;
 	p2.x = 1500;
 	p2.y = 840;
 	p2.color = 0x0000F0FF;
