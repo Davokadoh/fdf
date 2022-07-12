@@ -92,12 +92,14 @@ t_vec3d	scale(t_vec3d pt, int zoom)
 	return (res);
 }
 
-t_vec3d	rotate(t_vec3d pt, int a, int b, int c) // a = alpha, b = beta, c = gamma
+//a = alpha, b = beta, c = gamma
+t_vec3d	rotate(t_vec3d pt, int a, int b, int c)
 {
 	t_vec3d	res;
 
-	res.x = pt.x * cos(b) * cos(c) + pt.y * (sin(a) * sin(b) * cos(c) - cos(a) * sin(c))\
-		+ pt.z * (cos(a) * sin(b) * cos(c) + sin(a) * sin(c));
+	res.x = pt.x * cos(b) * cos(c)\
+			+ pt.y * (sin(a) * sin(b) * cos(c) - cos(a) * sin(c))\
+			+ pt.z * (cos(a) * sin(b) * cos(c) + sin(a) * sin(c));
 	res.y = pt.y;
 	res.z = pt.z;
 	return (res);
