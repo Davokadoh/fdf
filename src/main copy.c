@@ -2,24 +2,25 @@
 
 typedef struct s_vec2d
 {
-	int	x;
-	int	y;
-	int	color;
+	int		x;
+	int		y;
+	t_rgb	color;
 }	t_vec2d;
+
+typedef struct s_vec3d
+{
+	int		x;
+	int		y;
+	int		z;
+	t_rgb	color;
+}	t_vec3d;
 
 typedef struct s_map
 {
-	int		width;
-	int		height;
-	t_vec2d	**points;
+	int	width;
+	int	height;
+	int	**pts;
 }	t_map;
-
-typedef struct s_env
-{
-	t_map	*map;
-	t_mlx	*mlx;
-	t_data	*img;
-}	t_env;
 
 typedef struct	s_img {
 	void	*img;
@@ -29,6 +30,12 @@ typedef struct	s_img {
 	int		endian;
 }	t_img;
 
+typedef struct	s_rgb {
+	//int	a;
+	int	r;
+	int	g;
+	int	b;
+}	t_rgb;
 
 
 
@@ -36,11 +43,7 @@ typedef struct	s_img {
 
 
 
-
-
-
-
-read_and_parse(int fd)
+read_map(int fd)
 {
 	t_map	map;
 	char	**nbrs;
@@ -54,34 +57,127 @@ read_and_parse(int fd)
 		nbrs = ft_strsplit(line, ' ');
 		j = -1;
 		while (nbrs[++j])
-			map.points[i][j] = ft_atoi(nbrs[j]);
+			map.pts[i][j] = ft_atoi(nbrs[j]);
 		i++;
 	}
+	ft_error();
 	return (map);
 }
 
-void	init_env(t_data *env)
+void	draw_segment(t_img img, t_vec2d a, t_vec2d b)
 {
-	env->mlx = mlx_init();
-	env->win = mlx_new_window(env->mlx, WIDTH, HEIGHT, "Fil de Fer");
-	init->img(env);
-	init->mouse();
+	if (anti_aliasing)
+		wu(img, a, b);
+	else
+		bresenham(img, a, b);
 }
 
-void	render_frame()
+t_vec3d	translate(t_vec3d pt, int x, int y, int z)
 {
-	project();
+	t_vec3d	res;
+
+	res.x = pt.x + x;
+	res.y = pt.y + y;
+	res.z = pt.z + z;
+	return (res);
+}
+
+t_vec3d	scale(t_vec3d pt, int zoom)
+{
+	t_vec3d	res;
+
+	res.x = pt.x * zoom;
+	res.y = pt.y * zoom;
+	res.z = pt.z * zoom;
+	return (res);
+}
+
+t_vec3d	rotate(t_vec3d pt, int a, int b, int c) // a = alpha, b = beta, c = gamma
+{
+	t_vec3d	res;
+
+	res.x = pt.x * cos(b) * cos(c) + pt.y * (sin(a) * sin(b) * cos(c) - cos(a) * sin(c))\
+		+ pt.z * (cos(a) * sin(b) * cos(c) + sin(a) * sin(c));
+	res.y = pt.y;
+	res.z = pt.z;
+	return (res);
+}
+
+//1. Translate map so center is @ origin
+//2. Scale x,y,z
+//3. Apply rotations
+//4. Translate back to center of window
+//5. Translate more if env
+//6. Get color
+t_vec2d	transform(t_vec3d pt)
+{
+	t_vec3d	res;
+
+	res = translate(pt, -mid_map_w, -mid_map_h, -mid_map_z);
+	res = scale(res, zoom);
+	res = rotate(res, angle);
+	res = translate(res, win_w / 2, win_h / 2, 0);
+	res = translate(res, more);
+	res.color = get_color(pt.z);
+	return (project(res));
+}
+
+void	draw_map(t_map map)
+{
+	int	x;
+	int	y;
+
+	y = 0;
+	while (map[y][x])
+	{
+		while (map[y][x])
+		{
+			x = 0;
+			if (map[y+1][x])
+				draw_segment(img, transform(map[y][x]), transform(map[y+1][x]));
+			if (map[y][x+1])
+				draw_segment(img, transform(map[y][x]), transform(map[y][x+1]));
+			x++;
+		}
+		y++;
+	}
+}
+
+void	draw_background(t_map map, t_rgb bckgrnd_color)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	while (++i <= map->height) //Strict < or <=
+	{
+		j = -1;
+		while (++j <= map->width) //Strict < or <=
+		{
+			put_pixel(i, j, bckgrnd_color);
+		}
+	}
+}
+
+void	render(t_img img, t_map map)
+{
+	t_rgb	bkgrnd_color;
+
+	bckgrnd_color = 0x111111;
+	draw_background(img, bckgrnd_color);
+	draw_map(img, map);
+	//draw_menu();
 	mlx_put_image_to_window(mlx, win, img, 0, 0);
 }
 
 void	hooks()
 {
-	mlx_loop_hook(data.mlx_ptr, &render_frame, &data);
-	mlx_key_hook();
-	mlx_hook();
+	mlx_loop_hook(data.mlx_ptr, &render, &data); //Render each frames, could render on input only
+	//mlx_key_hook();
+	//mlx_hook();
 }
 
-void	display(t_data data)
+void	display(t_map map)
 {
 	void	*mlx;
 	void	*win;
@@ -90,11 +186,14 @@ void	display(t_data data)
 	mlx = mlx_init();
 	win = mlx_new_window(mlx, width, height, "Fil de Fer"); //Update to name of the file!
 	img = mlx_new_image(mlx, width, height);
-	//What is get_data_addr useful for ?
 	img.addr = mlx_get_data_addr(
 		img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
 	hooks(win);
+	render(img, map);
 	mlx_loop(mlx);
+	free_data(mlx);
+	free_data(win);
+	free_data(img);
 }
 
 int main(int ac, char **av)
@@ -104,8 +203,9 @@ int main(int ac, char **av)
 
 	if (argc != 2)
 		ft_error("Usage: ./fdf <map_file>\n");
-	if ((map = read_and_parse_file(av[1])) == NULL)
+	if ((map = read_map(av[1])) == NULL)
 		ft_error("Error: invalid map file\n");
 	display(map);
-	free_data();
+	free_data(map);
 }
+
