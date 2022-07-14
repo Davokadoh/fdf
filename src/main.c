@@ -1,46 +1,61 @@
 #include "fdf.h"
 
-int	close(int keycode, t_mlx *vars)
+void	render(t_img img, t_map map)
 {
-	if (keycode == 53)
-	{
-		mlx_destroy_window(vars->mlx, vars->win);
-		exit(0);
-	}
-	return 0;
+	t_rgb	bkgrnd_color;
+
+	bckgrnd_color = 0x111111;
+	draw_background(img, bckgrnd_color);
+	draw_map(img, map);
+	mlx_put_image_to_window(mlx, win, img, 0, 0);
 }
 
-int	main(void)
+void	hooks()
 {
-	t_mlx	vars;
-	t_data	img;
-	t_point	p1;
-	t_point	p2;
+	mlx_loop_hook(env.mlx_ptr, &render, &env); //Render each frames, could render on input only
+	mlx_key_hook();
+	mlx_hook(env.win, 17, 0, free_exit, &env);
+	mlx_hook();
+}
 
-	vars.h = 1080;
-	vars.w = 1920;
-	p1.x = 100;
-	p1.y = 240;
-	p1.color = 0x00002400;
-	p2.x = 1500;
-	p2.y = 840;
-	p2.color = 0x0000F0FF;
-	vars.mlx = mlx_init();
-	vars.win = mlx_new_window(vars.mlx, vars.w, vars.h, "Hello FdF!");
-	img.img = mlx_new_image(vars.mlx, vars.w, vars.h);
+void	display(t_map map)
+{
+	void	*mlx;
+	void	*win;
+	t_img	img;
+	
+	mlx = mlx_init();
+	win = mlx_new_window(mlx, width, height, "Fil de Fer"); //Update to name of the file!
+	img = mlx_new_image(mlx, width, height);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
-	draw_line(&img, p1, p2);
-	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 0, 0);
-	mlx_hook(vars.win, 2, 0L, close, &vars);
-	mlx_loop(vars.mlx);
-	return (0);
+	render(img, map);
+	hooks();
+	mlx_loop(mlx);
+	free(mlx);
+	free(win);
+	free_data(img);
 }
 
-//TODO
-//Draw 2D lines
-//	Arbitrary coord.
-//	With offset (eg. [0,0] is at [500,500])
-//Projections
-//argv/c check
-//Map file parser
-//Free
+int	free_exit(void	*env)
+{
+	free_map(&env->map);
+	mlx_destroy_image(env->mlx, env->img->img);
+	mlx_destroy_window(env->mlx, env->win);
+	env->mlx_ptr = NULL;
+	env->win_ptr = NULL;
+	exit(0);
+}
+
+int main(int ac, char **av)
+{
+	t_map	map;
+	t_env	env;
+
+	if (ac != 2)
+		ft_error("Usage: ./fdf <map_file>\n");
+	if ((map = read_map(av[1])) == NULL)
+		ft_error("Error: invalid map file\n");
+	display(map);
+	free_exit(env);
+}
+
