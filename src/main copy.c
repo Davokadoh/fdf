@@ -168,15 +168,15 @@ void	render(t_img img, t_map map)
 	bckgrnd_color = 0x111111;
 	draw_background(img, bckgrnd_color);
 	draw_map(img, map);
-	//draw_menu();
 	mlx_put_image_to_window(mlx, win, img, 0, 0);
 }
 
 void	hooks()
 {
 	mlx_loop_hook(data.mlx_ptr, &render, &data); //Render each frames, could render on input only
-	//mlx_key_hook();
-	//mlx_hook();
+	mlx_key_hook();
+	mlx_hook(env.win, 17, 0, free_exit, &env);
+	mlx_hook();
 }
 
 void	display(t_map map)
@@ -188,14 +188,23 @@ void	display(t_map map)
 	mlx = mlx_init();
 	win = mlx_new_window(mlx, width, height, "Fil de Fer"); //Update to name of the file!
 	img = mlx_new_image(mlx, width, height);
-	img.addr = mlx_get_data_addr(
-		img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
-	hooks(win);
+	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
 	render(img, map);
+	hooks();
 	mlx_loop(mlx);
 	free_data(mlx);
 	free_data(win);
 	free_data(img);
+}
+
+int	free_exit(void	*env)
+{
+	free_map(&env->map);
+	mlx_destroy_image(data->mlx_ptr, data->img->mlx_img);
+	mlx_destroy_window(data->mlx_ptr, data->win_ptr);
+	data->mlx_ptr = NULL;
+	data->win_ptr = NULL;
+	exit(0);
 }
 
 int main(int ac, char **av)
@@ -203,11 +212,11 @@ int main(int ac, char **av)
 	t_map	map;
 	t_env	env;
 
-	if (argc != 2)
-		ft_error("Usage: ./fdf <map_file>\n");
+	if (ac != 2)
+		exit(ft_error("Usage: ./fdf <map_file>\n"));
 	if ((map = read_map(av[1])) == NULL)
 		ft_error("Error: invalid map file\n");
 	display(map);
-	free_data(map);
+	free_exit(env);
 }
 
