@@ -1,7 +1,7 @@
 #ifndef FDF_H
 # define FDF_H
 
-# include "mlx.h" //TO check
+# include "mlx.h" //To check syntax: <> vs ""
 # include <stdlib.h>
 # include <math.h>
 
@@ -50,7 +50,6 @@ typedef struct	s_mlx
 	int		w;
 }				t_mlx;
 
-
 //General
 t_map	read_map(int fd);
 
@@ -65,12 +64,12 @@ void	render(t_img img, t_map map);
 void	draw_map(t_map map);
 void	draw_background(t_map map, t_rgb color);
 void	draw_line(t_img *img, t_pixel p1, t_pixel p2);
-void	wu();
+void	xialon_wu();
 void	bresenham();
 
-//mlx
-display(t_map map);
-hooks(t_env env);
-free_exit(t_env env);
+//Mlx
+void	display(t_map map);
+void	hooks(t_env env);
+void	free_exit(t_env env);
 
 #endif

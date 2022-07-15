@@ -1,14 +1,14 @@
 #include "fdf.h"
 
-void	draw_segment(t_img img, t_vec2d a, t_vec2d b)
+void	draw_segment(t_img img, t_pixel a, t_pixel b)
 {
-	if (anti_aliasing)
-		wu(img, a, b);
+	if (1) //(anti_aliasing)
+		xialon_wu(img, a, b);
 	else
-		bresenham(img, a, b);
+		bresenham(img, a, b); //Not implemented yet!
 }
 
-void	draw_map(t_map map)
+void	draw_map(t_img img, t_map map)
 {
 	int	x;
 	int	y;
@@ -45,3 +45,12 @@ void	draw_background(t_map map, t_rgb bckgrnd_color)
 	}
 }
 
+void	render(void mlx, void win, t_img img, t_map map)
+{
+	t_rgb	bkgrnd_color;
+
+	bckgrnd_color = 0x111111;
+	draw_background(img, bckgrnd_color);
+	draw_map(img, map);
+	mlx_put_image_to_window(mlx, win, img, 0, 0);
+}
