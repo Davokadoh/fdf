@@ -42,13 +42,15 @@ typedef struct	s_img
 	int		endian;
 }				t_img;
 
-typedef struct	s_mlx
+typedef struct	s_env
 {
 	void	*mlx;
 	void	*win;
-	int		h;
-	int		w;
-}				t_mlx;
+	int		win_h;
+	int		win_w;
+	t_img	img;
+	t_map	map;
+}				t_env;
 
 //General
 t_map	read_map(int fd);
@@ -60,7 +62,7 @@ t_vec	rotate(t_vec vec, int x, int y, int z);
 t_vec	scale(t_vec vec, int zoom);
 
 //Render
-void	render(t_img img, t_map map);
+void	render(t_env env);
 void	draw_map(t_map map);
 void	draw_background(t_map map, t_rgb color);
 void	draw_line(t_img *img, t_pixel p1, t_pixel p2);
@@ -69,7 +71,7 @@ void	bresenham();
 
 //Mlx
 void	display(t_map map);
-void	hooks(t_env env);
+void	hooks(t_env *env);
 void	free_exit(t_env env);
 
 #endif

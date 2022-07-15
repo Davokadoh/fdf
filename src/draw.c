@@ -1,6 +1,6 @@
 #include "fdf.h"
 
-void	draw_segment(t_img img, t_pixel a, t_pixel b)
+void	draw_segment(t_img *img, t_pixel a, t_pixel b)
 {
 	if (1) //(anti_aliasing)
 		xialon_wu(img, a, b);
@@ -45,7 +45,7 @@ void	draw_background(t_map map, t_rgb bckgrnd_color)
 	}
 }
 
-void	render(void mlx, void win, t_img img, t_map map)
+void	render(t_env env)
 {
 	t_rgb	bkgrnd_color;
 
