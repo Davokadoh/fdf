@@ -1,3 +1,4 @@
+- Add gnl to libft
 - Check argc/v
 - Read map input
 - Parse map
