@@ -1,6 +1,6 @@
 #include "fdf.h"
 
-t_vec	translate(t_vec3d pt, int x, int y, int z)
+t_vec	translate(t_vec pt, int x, int y, int z)
 {
 	t_vec	res;
 
@@ -10,7 +10,7 @@ t_vec	translate(t_vec3d pt, int x, int y, int z)
 	return (res);
 }
 
-t_vec	scale(t_vec3d pt, int factor)
+t_vec	scale(t_vec pt, int factor)
 {
 	t_vec	res;
 
@@ -21,7 +21,7 @@ t_vec	scale(t_vec3d pt, int factor)
 }
 
 //a = alpha, b = beta, c = gamma
-t_vec	rotate(t_vec3d pt, int a, int b, int c)
+t_vec	rotate(t_vec pt, int a, int b, int c)
 {
 	t_vec	res;
 
@@ -33,13 +33,23 @@ t_vec	rotate(t_vec3d pt, int a, int b, int c)
 	return (res);
 }
 
+t_rgb	z_to_color(int z)
+{
+	t_rgb	rgb;
+
+	rgb.r = z * int_to_rgb(z).r;
+	rgb.g = z * int_to_rgb(z).g;
+	rgb.b = z * int_to_rgb(z).b;
+	return (rgb);
+}
+
 t_pixel project(t_vec v)
 {
 	t_pixel	pixel;
 
 	pixel.x = v.x;
 	pixel.y = v.y;
-	pixel.color = get_color(v.z);
+	pixel.color = z_to_color(v.z);
 	return (pixel);
 }
 
@@ -49,12 +59,12 @@ t_pixel project(t_vec v)
 //4. Translate to center of window
 //5. Translate more if env
 //7. Project to 2d pixels w/ color
-t_pixel	transform(t_vec pt)
+t_pixel	transform(t_env *env, t_vec pt)
 {
 	t_vec	res;
 
-	return ((t_pixel){pt.x, pt.y, pt.z}); //testing
-	res = translate(pt, -map.w / 2, -map.h / 2, -map.z / 2); //z may be wrong
+	return ((t_pixel){pt.x, pt.y, {0, 0, 0}}); //testing
+	res = translate(pt, -env->map.width / 2, -env->map.h / 2, -env->map.z / 2); //z may be wrong
 	res = scale(res, factor);
 	res = rotate(res, angle);
 	res = translate(res, win_w / 2, win_h / 2, 0);

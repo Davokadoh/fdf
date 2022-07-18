@@ -1,23 +1,33 @@
 TARGET := fdf
 
 CC := gcc
-CFLAGS := -Wall -Wextra -Werror -g #-fsanitize
-LDFLAGS := -Lmlx -lmlx -framework OpenGL -framework AppKit
+CFLAGS := -Wall -Wextra -Werror -g#-fsanitize
+MLXFLAGS := -Lmlx -lmlx -framework OpenGL -framework AppKit
+
+LIBFT_DIR := libft/
+LIBFT := libft/libft.a
+MLX_DIR := mlx/
+MLX := mlx/libmlx.a
 
 BUILD_DIR := build
-SRC_DIRS := src
-SRCS := main.c draw_line.c
+SRC_DIR := src
+SRCS := main.c draw.c draw_line.c matrix.c read_map.c
 OBJS := $(SRCS:%.c=$(BUILD_DIR)/%.o)
 
 # The final build step.
-$(TARGET): $(OBJS)
-	make -C mlx
-	$(CC) $(OBJS) -o $@ $(LDFLAGS)
+$(TARGET): $(OBJS) $(LIBFT) $(MLX)
+	$(CC) $(CFLAGS) $(MLXFLAGS) $(OBJS) -o $@ $(LIBFT) $(MLX)
 
 # Build step for C source
-$(BUILD_DIR)/%.o: $(SRC_DIRS)/%.c
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) -Imlx $(CFLAGS) -c $< -o $@
+
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_DIR)
+
+$(MLX):
+	$(MAKE) -C $(MLX_DIR)
 
 .PHONY: clean fclean re
 

@@ -1,15 +1,17 @@
 #ifndef FDF_H
 # define FDF_H
 
-# include "mlx.h" //To check syntax: <> vs ""
+# include "../mlx/mlx.h" //To check syntax: <> vs ""
+# include "../libft/libft.h" //To check syntax: <> vs ""
 # include <stdlib.h>
 # include <math.h>
+# include <unistd.h>
 
 typedef struct	s_rgb
 {
-	int	r;
-	int	g;
-	int	b;
+	char	r;
+	char	g;
+	char	b;
 }				t_rgb;
 
 typedef struct	s_pixel
@@ -56,22 +58,25 @@ typedef struct	s_env
 t_map	read_map(int fd);
 
 //Matrices
-t_pixel	transform(t_vec vec);
+t_pixel	transform(t_env *env, t_vec vec);
 t_vec	translate(t_vec vec, int x, int y, int z);
 t_vec	rotate(t_vec vec, int x, int y, int z);
 t_vec	scale(t_vec vec, int zoom);
 
 //Render
-void	render(t_env env);
-void	draw_map(t_map map);
-void	draw_background(t_map map, t_rgb color);
-void	draw_line(t_img *img, t_pixel p1, t_pixel p2);
-void	xialon_wu();
+int		rgb_to_int(t_rgb color);
+t_rgb	int_to_rgb(int color);
+void	put_pixel(t_env *env, int x, int z, t_rgb color);
+void	render(t_env *env);
+void	draw_map(t_env *env, t_img *img, t_map map);
+void	draw_background(t_env *env, t_map map, t_rgb color);
+void	draw_segment(t_img *img, t_pixel a, t_pixel b);
+void	xiaolin_wu();
 void	bresenham();
 
 //Mlx
-void	display(t_map map);
+void	display(t_env *env);
 void	hooks(t_env *env);
-void	free_exit(t_env env);
+int		free_exit(t_env *env);
 
 #endif
