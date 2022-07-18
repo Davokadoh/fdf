@@ -64,11 +64,12 @@ t_pixel	transform(t_env *env, t_vec pt)
 	t_vec	res;
 
 	return ((t_pixel){pt.x, pt.y, {0, 0, 0}}); //testing
-	res = translate(pt, -env->map.width / 2, -env->map.h / 2, -env->map.z / 2); //z may be wrong
-	res = scale(res, factor);
-	res = rotate(res, angle);
-	res = translate(res, win_w / 2, win_h / 2, 0);
-	res = translate(res, more);
+	//res = translate(pt, -env->map.width / 2, -env->map.height / 2, -env->map.z / 2); //z may be wrong
+	res = translate(pt, -env->map.width / 2, -env->map.height / 2, 0); //z may be wrong
+	res = scale(res, env->factor);
+	res = rotate(res, env->angle, env->angle, env->angle);
+	res = translate(res, env->win_w / 2, env->win_h / 2, 0);
+	//res = translate(res, more);
 	return (project(res));
 }
 

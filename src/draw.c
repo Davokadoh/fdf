@@ -74,7 +74,7 @@ void	draw_background(t_env *env, t_map map, t_rgb bckgrnd_color)
 	}
 }
 
-void	render(t_env *env)
+int	render(t_env *env)
 {
 	t_rgb	bckgrnd_color;
 
@@ -84,4 +84,5 @@ void	render(t_env *env)
 	draw_background(env, env->map, bckgrnd_color);
 	draw_map(env, &env->img, env->map);
 	mlx_put_image_to_window(env->mlx, env->win, env->img.img, 0, 0);
+	return (0);
 }
